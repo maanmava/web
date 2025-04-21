@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MDM Sport Store</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #631b8a;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .product, .register, .cart, .sales-history, .about-us, .login, .forgot-password {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 2px solid #631b8a;
+      border-radius: 15px;
+    }
+
+    .product img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    label, select, input, textarea, button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .cart-item {
+      border-top: 1px solid #ccc;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+      padding: 0 10px;
+      text-align: left;
+    }
+
+    .cart-total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .quantity-input {
+      width: 60px;
+    }
+
+    .payment-section {
+      border-top: 2px solid #631b8a;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    .buy-now {
+      background-color: #631b8a;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .buy-now:hover {
+      background-color: #4b126b;
+    }
+
+    .sales-history ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .sales-history li {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+
+    .about-us {
+      text-align: center;
+      background-color: #fff;
+      padding: 20px;
+      margin-top: 40px;
+      border-radius: 15px;
+    }
+
+    .login, .forgot-password {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to MDM Sport Store 🏆</h1>
+    <img src="https://i.imgur.com/Fckv11C.jpg" 
+         alt="MDM Sport Logo"
+         style="display: block; margin: 20px auto; max-width: 300px; border-radius: 15px;" />
+
+    <!-- Personalized Welcome Section -->
+    <div id="welcomeMessage" class="welcome-message" style="text-align: center; display: none;">
+      <h2>Welcome, <span id="userName"></span>!</h2>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- User Registration Section -->
+    <div class="register">
+      <h2>Create Account</h2>
+      <input type="text" id="registerFullName" placeholder="Full Name" />
+      <input type="email" id="registerEmail" placeholder="Email" />
+      <input type="password" id="registerPassword" placeholder="Password" />
+      <button onclick="registerUser()">Register</button>
+      <br />
+      <button onclick="showLoginForm()">Login</button>
+      <br />
+      <button onclick="showForgotPasswordForm()">Forgot Password?</button>
+    </div>
+
+    <!-- User Login Section -->
+    <div class="login">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button onclick="loginUser()">Login</button>
+      <br />
+      <button onclick="showRegisterForm()">Create Account</button>
+      <br />
+      <button onclick="showForgotPasswordForm()">Forgot Password?</button>
+    </div>
+
+    <!-- Forgot Password Section -->
+    <div class="forgot-password">
+      <h2>Forgot Password?</h2>
+      <input type="email" id="forgotEmail" placeholder="Enter your email" />
+      <button onclick="recoverPassword()">Recover Password</button>
+    </div>
+
+    <!-- Product Selection -->
+    <div class="product">
+      <h2>Select Your Product</h2>
+      <label>Category:</label>
+      <select id="category">
+        <option value="men">Men 👨</option>
+        <option value="women">Women 👩</option>
+        <option value="youth">Youth 👦</option>
+        <option value="girls">Girls 👧</option>
+      </select>
+
+      <label>Product:</label>
+      <select id="productType" onchange="updateOptions()">
+        <option value="tshirt">T-Shirt 👕</option>
+        <option value="hoodie">Hoodie 🧥</option>
+        <option value="shoes">Shoes 👟</option>
+        <option value="cap">Cap 🧢</option>
+      </select>
+
+      <div id="productImageContainer">
+        <img id="productImage" src="" alt="Product image" />
+      </div>
+
+      <label>Option:</label>
+      <select id="productOption"></select>
+
+      <label>Size:</label>
+      <select id="productSize">
+        <option value="S">Small (S)</option>
+        <option value="M">Medium (M)</option>
+        <option value="L">Large (L)</option>
+        <option value="XL">X-Large (XL)</option>
+      </select>
+
+      <label>Shipping Address:</label>
+      <textarea id="shippingAddress" rows="3" placeholder="Street, City, Zip, Country"></textarea>
+
+      <label>Shipping Method:</label>
+      <select id="shippingMethod">
+        <option value="Free Shipping">Free Shipping - $0.00</option>
+        <option value="Standard Shipping">Standard Shipping - $4.99</option>
+        <option value="Express Shipping">Express Shipping - $9.99</option>
+      </select>
+
+      <button onclick="addToCart()">Add to Cart</button>
+    </div>
+
+    <!-- Cart Section -->
+    <div class="cart">
+      <h2>Your Cart 🛒</h2>
+      <div id="cartItems"></div>
+      <div class="cart-total" id="cartTotal">Total: $0.00</div>
+
+      <h3>Have a Discount Code? 🎉</h3>
+      <input type="text" id="discountCode" placeholder="Enter code e.g. MDM10" />
+      <button onclick="applyDiscount()">Apply Discount</button>
+      <div class="cart-total" id="finalTotal" style="color: green; font-weight: bold;"></div>
+
+      <div class="payment-section">
+        <label>Payment Method:</label>
+        <select id="paymentMethod">
+          <option value="paypal">PayPal 💳</option>
+          <option value="creditcard">Credit Card 💳</option>
+        </select>
+
+        <button class="buy-now" onclick="buyNow()">Buy Now</button>
+      </div>
+    </div>
+
+    <!-- Sales History Section -->
+    <div class="sales-history">
+      <h2>Sales History 📈</h2>
+      <ul id="salesHistoryList"></ul>
+    </div>
+
+    <!-- About Us Section -->
+    <div class="about-us">
+      <h2>About MDM Sport</h2>
+      <p>MDM Sport is a top-quality sports apparel brand providing high-performance gear for athletes of all ages. We specialize in premium materials and stylish designs to help you achieve your best performance.</p>
+    </div>
+  </div>
+
+  <script>
+    const productOptions = {
+      tshirt: [
+        { label: 'MDM Classic T-Shirt - $19.99', value: '19.99' },
+        { label: 'MDM Fit Tee - $24.99', value: '24.99' }
+      ],
+      hoodie: [
+        { label: 'MDM Pro Hoodie - $39.99', value: '39.99' },
+        { label: 'MDM Winter Hoodie - $44.99', value: '44.99' }
+      ],
+      shoes: [
+        { label: 'MDM Running Shoes Size 9 - $59.99', value: '59.99' },
+        { label: 'MDM Trainers Size 10 - $64.99', value: '64.99' }
+      ],
+      cap: [
+        { label: 'MDM Flex Cap - $14.99', value: '14.99' },
+        { label: 'MDM Snapback - $18.99', value: '18.99' }
+      ]
+    };
+
+    const productImages = {
+      tshirt: 'https://i.imgur.com/VoeV2R9.jpg',
+      hoodie: 'https://i.imgur.com/VkAFTUv.jpg',
+      shoes: 'https://i.imgur.com/XvCvP1Q.jpg',
+      cap: 'https://i.imgur.com/LTqwr7h.jpg'
+    };
+
+    let discountApplied = false;
+    let salesHistory = JSON.parse(localStorage.getItem('salesHistory')) || [];
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+    function updateOptions() {
+      const type = document.getElementById('productType').value;
+      const optionSelect = document.getElementById('productOption');
+      const productImage = document.getElementById('productImage');
+      optionSelect.innerHTML = '';
+      productOptions[type].forEach(opt => {
+        const option = document.createElement('option');
+        option.text = opt.label;
+        option.value = opt.value;
+        optionSelect.add(option);
+      });
+      productImage.src = productImages[type];
+    }
+
+    function registerUser() {
+      const name = document.getElementById('registerFullName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+
+      if (name && email && password) {
+        users.push({ name, email, password });
+        localStorage.setItem('users', JSON.stringify(users));
+        alert(`Welcome ${name}! Your account is created.`);
+        showLoginForm();
+      } else {
+        alert("Please fill out all fields.");
+      }
+    }
+
+    function loginUser() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const user = users.find(user => user.email === email && user.password === password);
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        alert(`Welcome back, ${user.name}!`);
+        showWelcomeMessage(user.name);
+        renderCart();
+      } else {
+        alert("Invalid email or password.");
+      }
+    }
+
+    function showLoginForm() {
+      document.querySelector('.register').style.display = 'none';
+      document.querySelector('.login').style.display = 'block';
+    }
+
+    function showRegisterForm() {
+      document.querySelector('.login').style.display = 'none';
+      document.querySelector('.register').style.display = 'block';
+    }
+
+    function showForgotPasswordForm() {
+      document.querySelector('.login').style.display = 'none';
+      document.querySelector('.forgot-password').style.display = 'block';
+    }
+
+    function recoverPassword() {
+      const email = document.getElementById('forgotEmail').value;
+      const user = users.find(user => user.email === email);
+      if (user) {
+        alert(`Password recovery link sent to ${email}`);
+        showLoginForm();
+      } else {
+        alert("Email not found.");
+      }
+    }
+
+    function showWelcomeMessage(name) {
+      document.querySelector('.welcome-message').style.display = 'block';
+      document.getElementById('userName').innerText = name;
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      alert("You have logged out.");
+      location.reload();
+    }
+
+    function addToCart() {
+      if (!currentUser) {
+        alert("Please log in to add items to the cart.");
+        return;
+      }
+
+      const product = document.getElementById('productType').value;
+      const option = document.getElementById('productOption');
+      const price = parseFloat(option.value);
+      const label = option.options[option.selectedIndex].text;
+      const size = document.getElementById('productSize').value;
+      const image = productImages[product];
+
+      const item = {
+        product,
+        label,
+        size,
+        price,
+        image,
+        quantity: 1
+      };
+
+      let cart = JSON.parse(localStorage.getItem('mdmCart')) || [];
+      const existingIndex = cart.findIndex(i => i.product === product && i.label === label && i.size === size);
+      if (existingIndex !== -1) {
+        cart[existingIndex].quantity += 1;
+      } else {
+        cart.push(item);
+      }
+      localStorage.setItem('mdmCart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function removeFromCart(index) {
+      let cart = JSON.parse(localStorage.getItem('mdmCart')) || [];
+      cart.splice(index, 1);
+      localStorage.setItem('mdmCart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function updateQuantity(index, qty) {
+      let cart = JSON.parse(localStorage.getItem('mdmCart')) || [];
+      if (qty <= 0) {
+        removeFromCart(index);
+      } else {
+        cart[index].quantity = qty;
+        localStorage.setItem('mdmCart', JSON.stringify(cart));
+        renderCart();
+      }
+    }
+
+    function applyDiscount() {
+      const code = document.getElementById('discountCode').value.trim();
+      if (code === 'MDM10' && !discountApplied) {
+        discountApplied = true;
+        renderCart();
+        alert("Discount applied: 10% off!");
+      } else if (discountApplied) {
+        alert("Discount already applied.");
+      } else {
+        alert("Invalid code.");
+      }
+    }
+
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem('mdmCart')) || [];
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const finalTotal = document.getElementById('finalTotal');
+      cartItems.innerHTML = '';
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="${item.image}" />
+          <div class="cart-item-details">
+            <strong>${item.label}</strong><br>
+            Size: ${item.size}<br>
+            $${item.price.toFixed(2)} x 
+            <input class="quantity-input" type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+          </div>
+          <button onclick="removeFromCart(${index})">Remove</button>
+        `;
+        cartItems.appendChild(div);
+        total += item.price * item.quantity;
+      });
+
+      cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+      if (discountApplied) {
+        const discounted = total * 0.9;
+        finalTotal.textContent = `Discounted Total: $${discounted.toFixed(2)}`;
+      } else {
+        finalTotal.textContent = '';
+      }
+    }
+
+    function buyNow() {
+      alert("Payment successful! Thank you for shopping with MDM Sport!");
+      let cart = JSON.parse(localStorage.getItem('mdmCart')) || [];
+      cart.forEach(item => {
+        salesHistory.push(item);
+      });
+      localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+      localStorage.removeItem('mdmCart');
+      renderCart();
+      location.reload();
+    }
+
+    function updateSalesHistory() {
+      const salesHistoryList = document.getElementById('salesHistoryList');
+      salesHistoryList.innerHTML = '';
+      salesHistory.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.label} - $${item.price.toFixed(2)} (Quantity: ${item.quantity})`;
+        salesHistoryList.appendChild(li);
+      });
+    }
+
+    // Initialize the page
+    updateOptions();
+    renderCart();
+    updateSalesHistory();
+  </script>
+</body>
+</html>
+
+      
